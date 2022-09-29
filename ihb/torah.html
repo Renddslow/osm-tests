@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Torah Unit Assessment | OSM: Intro to Hebrew Bible</title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+                box-sizing: border-box;
+            }
+
+            a {
+                color: #fd6a99;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+            header {
+                width: 100%;
+                margin: 48px auto 12px;
+                max-width: 640px;
+            }
+
+            form {
+                width: 100%;
+                margin: 0 auto;
+                max-width: 640px;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 1fr;
+                grid-gap: 24px;
+                counter-reset: section;
+            }
+
+            .question,
+            .name {
+                display: grid;
+                grid-template-columns: 1fr;
+                grid-gap: 12px;
+                position: relative;
+            }
+
+            .question::before {
+                position: absolute;
+                left: -22px;
+                counter-increment: section;
+                content: counter(section);
+                font-size: 32px;
+                font-family: "Times New Roman", Times, serif;
+                font-weight: 800;
+            }
+
+            .question textarea {
+                resize: none;
+                font-size: 18px;
+                padding: 12px;
+                line-height: 1.5;
+                border-radius: 8px;
+                border: 2px solid #afafb7;
+            }
+
+            .question p,
+            label {
+                font-size: 16px;
+                font-weight: 500;
+                width: 100%;
+            }
+
+            ins {
+                background: #f4c315;
+                text-decoration: none;
+            }
+
+            .question p:not(:last-child) {
+                margin-bottom: 12px;
+            }
+
+            input {
+                max-width: 250px;
+                font-size: 18px;
+                padding: 12px;
+                border-radius: 8px;
+                border: 2px solid #afafb7;
+            }
+
+            button[type="submit"] {
+                background: #fd6a99;
+                color: #fff;
+                font-size: 16px;
+                padding: 12px 32px;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                width: max-content;
+                margin-left: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <p><a href="https://flatland.learn.bible/courses/introduction-to-hebrew-bible/794" target="_blank">Introduction to Hebrew Bible</a></p>
+            <h1>Torah Assessment</h1>
+        </header>
+        <main>
+            <form id="form">
+                <div class="name">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <hr />
+                <div class="question">
+                    <div id="q1-text">
+                        <p>We began this unit by exploring the Paradigm, which is that the Bible is <ins>a unified story that leads to Jesus</ins>.</p>
+                        <p>The paradigm is composed of 7 pillars: human-divine, unified, messianic, wisdom, meditation literature, contextually-rooted, and communal.</p>
+                        <p>Describe which of the pillars most changed a category for you or was surprising. How does it change the way you approach the text. Give an example of this pillar impacting the way you engaged with the Torah.</p>
+                    </div>
+                    <textarea id="q1" aria-labelledby="q1-text" rows="8" required></textarea>
+                </div>
+                <div class="question">
+                    <div id="q2-text">
+                        <p>We spent time meditating on the story of Noah and how it kept replaying throughout the Torah, especially in the Moses story.</p>
+                        <p>What connections did we make with the Noah story? What connections did you make on your own? Reflect on the meditative nature of the paradigm and how you see it playing out in this example.</p>
+                    </div>
+                    <textarea id="q2" rows="8" aria-labelledby="q2-text" required></textarea>
+                </div>
+                <div class="question">
+                    <div id="q3-text">
+                        <p>In Leviticus 10, Nadab and Abihu offer strange fire before YHWH. We reflected on the ways that this might replay the Noah story and how the Nazirite vow in Numbers 6 seemed to further reflect on this tragedy.</p>
+                        <p>One of the crucial elements to Nadab and Abihu's trangression was their modification of the form of worship which YHWH had ordained for the priesthood to carry out. This ought to trouble us. Reflect here about how this affects the way we order our own practices of prayer and worship. How should the Nadab and Abihu story make us think about personal and corporate worship practices?</p>
+                    </div>
+                    <textarea id="q3" rows="8" aria-labelledby="q3-text" required></textarea>
+                </div>
+                <div class="question">
+                    <div id="q4-text">
+                        <p>One of the pillars of the paradigm that we often return to is that the Bible is contextually-rooted literature.</p>
+                        <p>Offer one example from your reading where you needed to center this particular aspect of the paradigm. Were there places in the Torah that troubled you that you realized may have been the result of importing your own cultural context onto the text?</p>
+                    </div>
+                    <textarea id="q4" rows="8" aria-labelledby="q4-text" required></textarea>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </main>
+        <script>
+            (() => {
+                document.getElementById('form').addEventListener('submit', (e) => {
+                   e.preventDefault();
+                   const form = e.target.elements;
+                   const name = form.name.value;
+                   const questionCount = form.length - 2;
+                   const answers = [];
+                     for (let i = 1; i <= questionCount; i++) {
+                          answers.push({
+                            question: document.getElementById(form[`q${i}`].getAttribute('aria-labelledby')).innerText,
+                            answer: form[`q${i}`].value,
+                            wordCount: form[`q${i}`].value.split(' ').length
+                          });
+                     }
+
+                     fetch('/api/submissions', {
+                         method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name,
+                            answers
+                        })
+                     }).then(() => {
+                         document.getElementById('form').innerHTML = `<h2>Thank you, ${name}!</h2>`;
+                     })
+               });
+            })();
+        </script>
+    </body>
+</html>
