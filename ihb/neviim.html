@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Nevi'im Unit Assessment | OSM: Intro to Hebrew Bible</title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+                box-sizing: border-box;
+            }
+
+            a {
+                color: #fd6a99;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+            header {
+                width: 100%;
+                margin: 48px auto 12px;
+                max-width: 640px;
+            }
+
+            form {
+                width: 100%;
+                margin: 0 auto;
+                max-width: 640px;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 1fr;
+                grid-gap: 24px;
+                counter-reset: section;
+            }
+
+            .question,
+            .name {
+                display: grid;
+                grid-template-columns: 1fr;
+                grid-gap: 12px;
+                position: relative;
+            }
+
+            .question::before {
+                position: absolute;
+                left: -22px;
+                counter-increment: section;
+                content: counter(section);
+                font-size: 32px;
+                font-family: "Times New Roman", Times, serif;
+                font-weight: 800;
+            }
+
+            .question textarea {
+                resize: none;
+                font-size: 18px;
+                padding: 12px;
+                line-height: 1.5;
+                border-radius: 8px;
+                border: 2px solid #afafb7;
+            }
+
+            .question p,
+            label {
+                font-size: 16px;
+                font-weight: 500;
+                width: 100%;
+            }
+
+            ins {
+                background: #f4c315;
+                text-decoration: none;
+            }
+
+            .question p:not(:last-child) {
+                margin-bottom: 12px;
+            }
+
+            input {
+                max-width: 250px;
+                font-size: 18px;
+                padding: 12px;
+                border-radius: 8px;
+                border: 2px solid #afafb7;
+            }
+
+            button[type="submit"] {
+                background: #fd6a99;
+                color: #fff;
+                font-size: 16px;
+                padding: 12px 32px;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                width: max-content;
+                margin-left: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <p><a href="https://flatland.learn.bible/courses/introduction-to-hebrew-bible/794" target="_blank">Introduction to Hebrew Bible</a></p>
+            <h1>Nevi'im Assessment</h1>
+        </header>
+        <main>
+            <form id="form">
+                <div class="name">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <hr />
+                <div class="question">
+                    <div id="q1-text">
+                        <p>The Nevi'im is a collection of eight books divided into two sections. What are the names of those two sections?</p>
+                        <p>What makes those two sections distinct from one another? How are they unified?</p>
+                    </div>
+                    <textarea id="q1" aria-labelledby="q1-text" rows="8" required></textarea>
+                </div>
+                <div class="question">
+                    <div id="q2-text">
+                        <p>Reflect on the Exile event of 586 BCE. Why was it significant for the people of Israel? What does it communicate to us about God and his character?</p>
+                    </div>
+                    <textarea id="q2" rows="8" aria-labelledby="q2-text" required></textarea>
+                </div>
+                <div class="question">
+                    <div id="q3-text">
+                        <p>We reflected in class on the structure of the book of Isaiah. You'll recall that Isaiah is divided into three sections, with each section likely being written by a different author or school of authors.</p>
+                        <p>What is the name of the literary device that Trito (Third) Isaiah used to have a mirror image on both sides of the center-point? What was at the center-point thematically?</p>
+                        <p>How does this style of literature, the text leading our focus to the center of a literary structure instead to the end, help you meditate more on Scripture?</p>
+                    </div>
+                    <textarea id="q3" rows="8" aria-labelledby="q3-text" required></textarea>
+                </div>
+                <div class="question">
+                    <div id="q4-text">
+                        <p>One of the pillars of the paradigm that we often return to is that the Bible is contextually-rooted literature.</p>
+                        <p>Offer one example from your reading where you needed to center this particular aspect of the paradigm. Were there places in the Nevi'im that troubled you that you realized may have been the result of importing your own cultural context onto the text?</p>
+                    </div>
+                    <textarea id="q4" rows="8" aria-labelledby="q4-text" required></textarea>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </main>
+        <script>
+            (() => {
+                document.getElementById('form').addEventListener('submit', (e) => {
+                   e.preventDefault();
+                   const form = e.target.elements;
+                   const name = form.name.value;
+                   const questionCount = form.length - 2;
+                   const answers = [];
+                     for (let i = 1; i <= questionCount; i++) {
+                          answers.push({
+                            question: document.getElementById(form[`q${i}`].getAttribute('aria-labelledby')).innerText,
+                            answer: form[`q${i}`].value,
+                            wordCount: form[`q${i}`].value.split(' ').length
+                          });
+                     }
+
+                     fetch('/api/submissions', {
+                         method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name,
+                            answers
+                        })
+                     }).then(() => {
+                         document.getElementById('form').innerHTML = `<h2>Thank you, ${name}!</h2>`;
+                     })
+               });
+            })();
+        </script>
+    </body>
+</html>
